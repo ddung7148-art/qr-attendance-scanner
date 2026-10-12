@@ -3,242 +3,175 @@
 <html lang="vi">
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1">
-  <meta name="theme-color" content="#123b68">
-  <title>Điểm danh đại biểu - Đoàn trường THPT Củ Chi</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="theme-color" content="#1b5e20">
+  <title>Điểm danh QR Code</title>
 
-  <script src="https://unpkg.com/html5-qrcode"></script>
+  <link
+    href="https://fonts.googleapis.com/css2?family=Dancing+Script:wght@600&display=swap"
+    rel="stylesheet"
+  >
+  <script src="https://unpkg.com/html5-qrcode" type="text/javascript"></script>
 
   <style>
+    :root {
+      --green-main: #1b5e20;
+      --white-glass: rgba(255, 255, 255, 0.85);
+    }
+
     * {
       box-sizing: border-box;
     }
 
     body {
       margin: 0;
-      padding: 24px 14px;
       min-height: 100vh;
-      font-family: Arial, Helvetica, sans-serif;
-      color: #17365d;
-      background: linear-gradient(135deg, #eaf1f8, #dce8f5);
-    }
-
-    .container {
-      width: 100%;
-      max-width: 720px;
-      margin: 0 auto;
-      padding: 26px;
-      background: #fff;
-      border-radius: 16px;
-      box-shadow: 0 6px 24px rgba(20, 52, 87, 0.12);
-    }
-
-    .header {
+      min-height: 100svh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      gap: 2svh;
+      font-family: Arial, sans-serif;
+      background:
+        url("https://i.postimg.cc/26p2zJG0/background-xanh-la-(29).jpg")
+        center / cover no-repeat fixed;
+      padding: clamp(12px, 4vw, 32px);
       text-align: center;
-      padding-bottom: 20px;
-      border-bottom: 2px solid #e3ebf5;
     }
 
-    .logo {
-      width: 76px;
-      height: 76px;
-      margin: 0 auto 10px;
+    .logo-container img {
+      height: clamp(70px, 18svh, 220px);
+      max-width: 80vw;
       object-fit: contain;
     }
 
-    .school-name {
-      margin: 0 0 10px;
-      color: #17365d;
-      font-size: 20px;
-      font-weight: bold;
-      text-transform: uppercase;
+    .slogan {
+      font-family: "Dancing Script", cursive;
+      font-size: clamp(20px, 4vw, 36px);
+      color: var(--green-main);
+      letter-spacing: 0.1em;
+      margin: 0.5svh 0 2svh;
+      font-weight: 600;
     }
 
-    h1 {
-      margin: 12px 0;
-      color: #0b4f8a;
-      font-size: 27px;
-      line-height: 1.35;
-      text-transform: uppercase;
-    }
-
-    .subtitle {
-      margin: 0;
-      color: #647891;
-      font-size: 15px;
-      line-height: 1.7;
-    }
-
-    .scanner-section {
-      margin-top: 24px;
-    }
-
-    .section-title {
-      margin: 0 0 16px;
-      color: #17365d;
-      font-size: 19px;
-      text-align: center;
+    #qr-wrapper {
+      width: min(85vw, 420px);
+      background: var(--white-glass);
+      padding: clamp(12px, 3vw, 24px);
+      border-radius: clamp(12px, 3vw, 22px);
+      box-shadow: 0 6px 20px rgba(0, 0, 0, 0.25);
     }
 
     #reader {
       width: 100%;
-      max-width: 520px;
-      margin: 0 auto;
+      min-width: 0;
+      border-radius: clamp(10px, 3vw, 18px);
+      overflow: hidden;
+      background: #fff;
+      padding: 4px;
+    }
+
+    /* Giữ giao diện vuông cho ảnh đại biểu */
+    #person-img {
+      display: none;
+      width: 100%;
+      aspect-ratio: 1;
+      border-radius: clamp(10px, 3vw, 18px);
+      background: #fff;
+      padding: 4px;
+      object-fit: contain;
     }
 
     #result {
-      min-height: 48px;
-      margin: 18px 0;
-      padding: 14px 16px;
-      border: 1px solid #dbe6f2;
-      border-radius: 10px;
-      background: #f0f5fb;
-      color: #17365d;
-      text-align: center;
-      line-height: 1.6;
+      margin-top: 2svh;
+      font-size: clamp(0.85rem, 2.5vw, 1.1rem);
+      background: rgba(209, 231, 221, 0.95);
+      color: #0f5132;
+      padding: clamp(8px, 2vw, 14px);
+      border-radius: clamp(8px, 2vw, 14px);
+      box-shadow: 0 2px 6px rgba(0, 0, 0, 0.15);
+      width: min(90vw, 420px);
       overflow-wrap: anywhere;
-      font-weight: 600;
+      line-height: 1.5;
     }
 
     #person-info {
       display: none;
-      margin-top: 20px;
-      padding: 22px 16px;
-      background: #f8fafc;
-      border: 1px solid #e1e9f2;
-      border-radius: 14px;
-      text-align: center;
-    }
-
-    #person-img {
-      display: none;
-      width: 170px;
-      max-width: 100%;
-      max-height: 230px;
-      margin: 0 auto 16px;
-      object-fit: contain;
+      width: min(90vw, 420px);
+      margin-top: 1svh;
+      padding: 12px;
       border-radius: 10px;
+      background: var(--white-glass);
     }
 
     #person-name {
-      color: #0b4f8a;
-      font-size: 23px;
       font-weight: bold;
-      line-height: 1.5;
+      font-size: clamp(0.95rem, 2.5vw, 1.2rem);
+      color: #1e3a8a;
       overflow-wrap: anywhere;
     }
 
     #person-time {
-      margin-top: 10px;
-      color: #647891;
-      font-size: 15px;
-    }
-
-    .instruction {
-      margin: 20px 0 0;
-      color: #718096;
-      font-size: 13px;
-      line-height: 1.7;
-      text-align: center;
-    }
-
-    footer {
-      margin-top: 26px;
-      padding-top: 16px;
-      border-top: 1px solid #e3ebf5;
-      color: #7b8da2;
-      font-size: 12px;
-      line-height: 1.7;
-      text-align: center;
+      margin-top: 8px;
+      font-size: clamp(0.8rem, 2.3vw, 1rem);
+      color: #333;
     }
 
     #reader button {
       cursor: pointer;
     }
 
-    @media (max-width: 520px) {
+    #reader select {
+      max-width: 100%;
+    }
+
+    @media (min-width: 1200px) {
       body {
-        padding: 12px 8px;
+        gap: 3svh;
       }
 
-      .container {
-        padding: 18px 14px;
-        border-radius: 12px;
+      #qr-wrapper {
+        width: 460px;
       }
+    }
 
-      .logo {
-        width: 64px;
-        height: 64px;
-      }
-
-      .school-name {
-        font-size: 16px;
-      }
-
-      h1 {
-        font-size: 22px;
-      }
-
-      .section-title {
-        font-size: 17px;
-      }
-
-      #person-name {
-        font-size: 20px;
+    @media (max-width: 480px) {
+      .slogan {
+        letter-spacing: 0.04em;
       }
     }
   </style>
 </head>
 
 <body>
-  <main class="container">
-    <header class="header">
-      <!-- Có thể thay ảnh mẫu bằng URL logo chính thức -->
-      <img
-        class="logo"
-        src="https://placehold.co/160x160/eaf1f8/17365d?text=DOAN"
-        alt="Logo Đoàn trường"
-      >
+  <div class="logo-container">
+    <img
+      src="https://i.postimg.cc/K8R6j6PV/z7382076674724-ea85d4c6c4d59d647d66a1c731f89b07-removebg-preview.png"
+      alt="Logo Đoàn trường"
+    >
+  </div>
 
-      <p class="school-name">Đoàn trường THPT Củ Chi</p>
+  <div class="slogan">
+    <em>Xung kích - tình nguyện - vì cộng đồng</em>
+  </div>
 
-      <h1>Hệ thống điểm danh</h1>
+  <div id="qr-wrapper">
+    <div id="reader"></div>
+    <img id="person-img" src="" alt="Ảnh cá nhân">
+  </div>
 
-      <p class="subtitle">
-        Đại hội Đoàn trường THPT Củ Chi<br>
-        Nhiệm kỳ 2025–2026
-      </p>
-    </header>
+  <div id="result" role="status" aria-live="polite">
+    Sẵn sàng quét mã QR.
+  </div>
 
-    <section class="scanner-section">
-      <h2 class="section-title">QUÉT MÃ QR ĐẠI BIỂU</h2>
-
-      <div id="reader"></div>
-
-      <div id="result" role="status" aria-live="polite">
-        Sẵn sàng quét mã QR.
-      </div>
-
-      <section id="person-info">
-        <img id="person-img" alt="Ảnh đại biểu">
-        <div id="person-name"></div>
-        <div id="person-time"></div>
-      </section>
-
-      <p class="instruction">
-        Vui lòng đưa mã QR vào giữa khung hình để hệ thống nhận diện.<br>
-        Kết quả điểm danh sẽ hiển thị ngay sau khi quét.
-      </p>
-    </section>
-
-    <footer>
-      HỆ THỐNG ĐIỂM DANH ĐẠI BIỂU<br>
-      ĐOÀN TRƯỜNG THPT CỦ CHI
-    </footer>
-  </main>
+  <div id="person-info">
+    <div id="person-name"></div>
+    <div id="person-time"></div>
+  </div>
 
   <script>
-    // Giữ nguyên Web App URL của bạn
+    // Web App URL của bạn — giữ nguyên đường dẫn đang sử dụng
     const API_URL =
       "https://script.google.com/macros/s/AKfycbzQ4lrhZ8o4G5UzlQ4vt9iXr5JmW55AqMr1gs6L7BgplG0o2V4fXlMZaDt_bwkFmAoW/exec";
 
@@ -255,7 +188,7 @@
     function startScanner() {
       if (typeof Html5QrcodeScanner === "undefined") {
         resultBox.textContent =
-          "Không tải được thư viện QR. Hãy kiểm tra kết nối Internet.";
+          "Không tải được thư viện quét QR. Vui lòng kiểm tra Internet.";
         return;
       }
 
@@ -265,7 +198,15 @@
         "reader",
         {
           fps: 10,
-          qrbox: { width: 250, height: 250 },
+          qrbox: function (viewfinderWidth, viewfinderHeight) {
+            const size = Math.floor(
+              Math.min(viewfinderWidth, viewfinderHeight) * 0.7
+            );
+            return {
+              width: Math.min(size, 250),
+              height: Math.min(size, 250)
+            };
+          },
           rememberLastUsedCamera: true
         },
         false
@@ -278,7 +219,7 @@
       if (processing) return;
 
       processing = true;
-      resultBox.textContent = "⏳ Đang ghi nhận điểm danh...";
+      resultBox.textContent = "Đang ghi nhận điểm danh...";
       infoBox.style.display = "none";
       imageBox.style.display = "none";
 
@@ -300,7 +241,7 @@
       ) {
         showResult({
           success: false,
-          message: "❌ Web App URL không hợp lệ."
+          message: "Web App URL không hợp lệ."
         });
         return;
       }
@@ -323,14 +264,14 @@
         showResult({
           success: false,
           message:
-            "❌ Không thể kết nối Apps Script. Hãy kiểm tra URL và quyền truy cập."
+            "Không kết nối được Apps Script. Hãy kiểm tra URL, bản triển khai và quyền truy cập."
         });
       };
 
       document.body.appendChild(script);
     }
 
-    // Nhận kết quả từ Apps Script
+    // Nhận dữ liệu JSONP trả về từ Apps Script
     window.handleAttendanceResponse = function (response) {
       showResult(response);
     };
@@ -341,7 +282,9 @@
 
       if (response.success) {
         nameBox.textContent = response.name || "";
-        timeBox.textContent = "⏰ " + (response.time || "");
+        timeBox.textContent = response.time
+          ? "⏰ " + response.time
+          : "";
 
         if (response.image) {
           imageBox.onload = function () {
