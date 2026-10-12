@@ -5,95 +5,93 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <meta name="theme-color" content="#123b68">
-  <title>Quét QR điểm danh</title>
+  <title>Điểm danh QR - Đoàn trường THPT Củ Chi</title>
 
   <script src="https://unpkg.com/html5-qrcode"></script>
 
   <style>
-    * {
-      box-sizing: border-box;
-    }
+    * { box-sizing: border-box; }
 
     body {
       margin: 0;
-      padding: 24px 16px;
+      padding: 20px 12px;
       font-family: Arial, sans-serif;
-      background: #f2f5fa;
+      background: #f1f5f9;
       color: #18324d;
     }
 
     .container {
       max-width: 600px;
-      margin: 0 auto;
-      padding: 24px;
-      background: #fff;
+      margin: auto;
+      padding: 22px;
+      background: white;
       border-radius: 16px;
-      box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+      box-shadow: 0 4px 20px #00000012;
     }
 
-    header {
-      text-align: center;
-      margin-bottom: 24px;
-    }
-
-    .logo {
-      font-size: 40px;
-    }
+    header { text-align: center; }
 
     h1 {
-      margin: 12px 0 8px;
       color: #123b68;
-      font-size: 25px;
+      font-size: 24px;
     }
 
-    .subtitle {
-      margin: 0;
-      color: #64748b;
-      line-height: 1.6;
-    }
+    .subtitle { color: #64748b; }
 
     #reader {
       width: 100%;
-      margin: 0 auto;
+      margin: 20px auto;
     }
 
     #result {
-      margin-top: 20px;
+      margin: 16px 0;
       padding: 14px;
-      border-radius: 10px;
       background: #eef4fb;
-      line-height: 1.6;
+      border-radius: 10px;
+      text-align: center;
       overflow-wrap: anywhere;
+      line-height: 1.6;
+    }
+
+    #person-info {
+      display: none;
+      margin-top: 18px;
       text-align: center;
     }
 
-    .note {
-      margin-top: 18px;
+    #person-img {
+      display: none;
+      width: 150px;
+      max-width: 100%;
+      max-height: 200px;
+      object-fit: contain;
+      margin: 14px auto;
+      border-radius: 10px;
+    }
+
+    #person-name {
+      font-size: 21px;
+      color: #123b68;
+      font-weight: bold;
+    }
+
+    #person-time {
       color: #64748b;
-      font-size: 13px;
-      text-align: center;
-      line-height: 1.6;
+      margin-top: 10px;
     }
 
     footer {
-      margin-top: 24px;
       text-align: center;
-      color: #718096;
+      margin-top: 24px;
       font-size: 12px;
+      color: #718096;
     }
 
-    #reader button {
-      cursor: pointer;
-    }
+    #reader button { cursor: pointer; }
 
     @media (max-width: 480px) {
-      .container {
-        padding: 16px;
-      }
-
-      h1 {
-        font-size: 21px;
-      }
+      .container { padding: 15px; }
+      h1 { font-size: 21px; }
     }
   </style>
 </head>
@@ -101,71 +99,157 @@
 <body>
   <main class="container">
     <header>
-      <div class="logo">📷</div>
+      <div style="font-size:40px">📷</div>
       <h1>HỆ THỐNG ĐIỂM DANH</h1>
-      <p class="subtitle">
-        Đoàn trường THPT Củ Chi
-      </p>
+      <p class="subtitle">Đoàn trường THPT Củ Chi</p>
     </header>
 
     <div id="reader"></div>
 
     <div id="result" role="status" aria-live="polite">
-      Nhấn nút bắt đầu quét và cho phép sử dụng camera.
+      Sẵn sàng quét mã QR.
     </div>
 
-    <p class="note">
-      Vui lòng đưa mã QR vào trong khung quét.
-      Sau khi đọc được mã, nội dung sẽ hiển thị bên dưới.
-    </p>
+    <section id="person-info">
+      <img id="person-img" alt="Ảnh đại biểu">
+      <div id="person-name"></div>
+      <div id="person-time"></div>
+    </section>
 
-    <footer>
-      QR ATTENDANCE SCANNER
-    </footer>
+    <footer>QR ATTENDANCE SCANNER</footer>
   </main>
 
   <script>
+    // THAY URL BÊN DƯỚI BẰNG WEB APP URL CỦA BẠN
+    const API_URL =
+      "https://script.google.com/macros/s/AKfycbzQ4lrhZ8o4G5UzlQ4vt9iXr5JmW55AqMr1gs6L7BgplG0o2V4fXlMZaDt_bwkFmAoW/exec";
+
     const resultBox = document.getElementById("result");
-    let scanner;
+    const infoBox = document.getElementById("person-info");
+    const imageBox = document.getElementById("person-img");
+    const nameBox = document.getElementById("person-name");
+    const timeBox = document.getElementById("person-time");
+
+    let scanner = null;
     let processing = false;
+    let restartTimer = null;
 
-    function onScanSuccess(decodedText) {
-      if (processing) return;
+    function startScanner() {
+      if (typeof Html5QrcodeScanner === "undefined") {
+        resultBox.textContent =
+          "Không tải được thư viện QR. Hãy kiểm tra Internet.";
+        return;
+      }
 
-      processing = true;
+      document.getElementById("reader").innerHTML = "";
 
-      resultBox.textContent =
-        "Đọc mã QR thành công: " + decodedText;
-
-      scanner.clear().catch(function(error) {
-        console.error("Không thể dừng camera:", error);
-      });
-    }
-
-    function onScanFailure(error) {
-      // Bỏ qua lỗi thông thường khi camera chưa nhận diện được QR.
-    }
-
-    if (typeof Html5QrcodeScanner === "undefined") {
-      resultBox.textContent =
-        "Không tải được thư viện quét QR. Hãy kiểm tra kết nối Internet.";
-    } else {
       scanner = new Html5QrcodeScanner(
         "reader",
         {
           fps: 10,
-          qrbox: {
-            width: 250,
-            height: 250
-          },
+          qrbox: { width: 250, height: 250 },
           rememberLastUsedCamera: true
         },
         false
       );
 
-      scanner.render(onScanSuccess, onScanFailure);
+      scanner.render(onScanSuccess, function () {});
     }
+
+    function onScanSuccess(decodedText) {
+      if (processing) return;
+
+      processing = true;
+      resultBox.textContent = "Đang ghi nhận điểm danh...";
+      infoBox.style.display = "none";
+      imageBox.style.display = "none";
+
+      const currentScanner = scanner;
+
+      currentScanner.clear()
+        .catch(function (error) {
+          console.warn("Không thể dừng máy quét:", error);
+        })
+        .finally(function () {
+          requestAttendance(decodedText);
+        });
+    }
+
+    function requestAttendance(qrText) {
+      if (
+        !API_URL.startsWith("https://script.google.com/macros/s/") ||
+        !API_URL.endsWith("/exec")
+      ) {
+        showResult({
+          success: false,
+          message: "Bạn chưa điền đúng Web app URL trong index.html."
+        });
+        return;
+      }
+
+      const script = document.createElement("script");
+
+      script.src =
+        API_URL +
+        "?action=attendance&studentId=" +
+        encodeURIComponent(qrText) +
+        "&_=" + Date.now();
+
+      script.onload = function () {
+        script.remove();
+      };
+
+      script.onerror = function () {
+        script.remove();
+        showResult({
+          success: false,
+          message:
+            "Không kết nối được Apps Script. Hãy kiểm tra URL, bản triển khai và quyền truy cập."
+        });
+      };
+
+      document.body.appendChild(script);
+    }
+
+    // Apps Script gọi hàm này để trả kết quả điểm danh
+    window.handleAttendanceResponse = function (response) {
+      showResult(response);
+    };
+
+    function showResult(response) {
+      resultBox.textContent = response.message || "Không nhận được kết quả.";
+
+      if (response.success) {
+        nameBox.textContent = response.name || "";
+        timeBox.textContent = "⏰ " + (response.time || "");
+
+        if (response.image) {
+          imageBox.onload = function () {
+            imageBox.style.display = "block";
+          };
+
+          imageBox.onerror = function () {
+            imageBox.style.display = "none";
+          };
+
+          imageBox.src = response.image;
+        }
+
+        infoBox.style.display = "block";
+      } else {
+        infoBox.style.display = "none";
+        imageBox.style.display = "none";
+      }
+
+      clearTimeout(restartTimer);
+
+      restartTimer = setTimeout(function () {
+        processing = false;
+        startScanner();
+      }, 4000);
+    }
+
+    startScanner();
   </script>
 </body>
 </html>
-
