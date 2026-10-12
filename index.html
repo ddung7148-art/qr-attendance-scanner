@@ -1,1 +1,171 @@
 
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#123b68">
+  <title>Quét QR điểm danh</title>
+
+  <script src="https://unpkg.com/html5-qrcode"></script>
+
+  <style>
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      margin: 0;
+      padding: 24px 16px;
+      font-family: Arial, sans-serif;
+      background: #f2f5fa;
+      color: #18324d;
+    }
+
+    .container {
+      max-width: 600px;
+      margin: 0 auto;
+      padding: 24px;
+      background: #fff;
+      border-radius: 16px;
+      box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+    }
+
+    header {
+      text-align: center;
+      margin-bottom: 24px;
+    }
+
+    .logo {
+      font-size: 40px;
+    }
+
+    h1 {
+      margin: 12px 0 8px;
+      color: #123b68;
+      font-size: 25px;
+    }
+
+    .subtitle {
+      margin: 0;
+      color: #64748b;
+      line-height: 1.6;
+    }
+
+    #reader {
+      width: 100%;
+      margin: 0 auto;
+    }
+
+    #result {
+      margin-top: 20px;
+      padding: 14px;
+      border-radius: 10px;
+      background: #eef4fb;
+      line-height: 1.6;
+      overflow-wrap: anywhere;
+      text-align: center;
+    }
+
+    .note {
+      margin-top: 18px;
+      color: #64748b;
+      font-size: 13px;
+      text-align: center;
+      line-height: 1.6;
+    }
+
+    footer {
+      margin-top: 24px;
+      text-align: center;
+      color: #718096;
+      font-size: 12px;
+    }
+
+    #reader button {
+      cursor: pointer;
+    }
+
+    @media (max-width: 480px) {
+      .container {
+        padding: 16px;
+      }
+
+      h1 {
+        font-size: 21px;
+      }
+    }
+  </style>
+</head>
+
+<body>
+  <main class="container">
+    <header>
+      <div class="logo">📷</div>
+      <h1>HỆ THỐNG ĐIỂM DANH</h1>
+      <p class="subtitle">
+        Đoàn trường THPT Củ Chi
+      </p>
+    </header>
+
+    <div id="reader"></div>
+
+    <div id="result" role="status" aria-live="polite">
+      Nhấn nút bắt đầu quét và cho phép sử dụng camera.
+    </div>
+
+    <p class="note">
+      Vui lòng đưa mã QR vào trong khung quét.
+      Sau khi đọc được mã, nội dung sẽ hiển thị bên dưới.
+    </p>
+
+    <footer>
+      QR ATTENDANCE SCANNER
+    </footer>
+  </main>
+
+  <script>
+    const resultBox = document.getElementById("result");
+    let scanner;
+    let processing = false;
+
+    function onScanSuccess(decodedText) {
+      if (processing) return;
+
+      processing = true;
+
+      resultBox.textContent =
+        "Đọc mã QR thành công: " + decodedText;
+
+      scanner.clear().catch(function(error) {
+        console.error("Không thể dừng camera:", error);
+      });
+    }
+
+    function onScanFailure(error) {
+      // Bỏ qua lỗi thông thường khi camera chưa nhận diện được QR.
+    }
+
+    if (typeof Html5QrcodeScanner === "undefined") {
+      resultBox.textContent =
+        "Không tải được thư viện quét QR. Hãy kiểm tra kết nối Internet.";
+    } else {
+      scanner = new Html5QrcodeScanner(
+        "reader",
+        {
+          fps: 10,
+          qrbox: {
+            width: 250,
+            height: 250
+          },
+          rememberLastUsedCamera: true
+        },
+        false
+      );
+
+      scanner.render(onScanSuccess, onScanFailure);
+    }
+  </script>
+</body>
+</html>
+
