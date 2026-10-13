@@ -40,20 +40,30 @@
       text-align: center;
     }
 
-    .logo-container img {
-      height: clamp(70px, 18svh, 220px);
-      max-width: 80vw;
-      object-fit: contain;
-    }
+    
+.logo-container {
+  width: 100%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
 
-    .slogan {
-      font-family: "Dancing Script", cursive;
-      font-size: clamp(20px, 4vw, 36px);
-      color: var(--green-main);
-      letter-spacing: 0.1em;
-      margin: 0.5svh 0 2svh;
-      font-weight: 600;
-    }
+.logo-container img {
+  width: min(82vw, 420px);
+  height: clamp(510px, 73svh, 550px);
+  max-width: 90vw;
+  object-fit: contain;
+}
+
+.slogan {
+  font-family: "Dancing Script", cursive;
+  font-size: clamp(20px, 3.5vw, 34px);
+  color: var(--green-main);
+  letter-spacing: 0.06em;
+  margin: 0 0 1svh;
+  font-weight: 600;
+}
+
 
     #qr-wrapper {
       width: min(85vw, 420px);
