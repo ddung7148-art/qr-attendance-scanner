@@ -205,7 +205,7 @@
   </div>
 
   <div class="slogan">
-    <em>Chào mừng đại biểu tham dự đại hội</em>
+    <em>Chào mừng đại biểu tham dự Đại hội</em>
   </div>
 
   <div id="qr-wrapper">
@@ -334,7 +334,7 @@
         response.message || "Không nhận được kết quả.";
 
       if (response.success) {
-        nameBox.textContent = response.name || "";
+        nameBox.textContent = "Đại biểu: " + (response.name || "");
         timeBox.textContent = response.time
           ? "⏰ " + response.time
           : "";
