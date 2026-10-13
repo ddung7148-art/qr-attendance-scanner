@@ -31,46 +31,52 @@
       flex-direction: column;
       align-items: center;
       justify-content: center;
-      gap: 2svh;
+      gap: 1svh;
       font-family: Arial, sans-serif;
       background:
         url("https://i.postimg.cc/Y25PyfMX/Nen-37.jpg")
         center / cover no-repeat fixed;
-      padding: clamp(12px, 4vw, 32px);
+      padding: clamp(10px, 2vw, 24px);
       text-align: center;
     }
 
-    
-.logo-container {
-  width: 100%;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-}
+    /* Logo: giữ tỷ lệ ảnh và giảm khoảng trống phía dưới */
+    .logo-container {
+      width: 100%;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      margin-bottom: -1svh;
+      flex-shrink: 0;
+    }
 
-.logo-container img {
-  width: min(82vw, 420px);
-  height: clamp(510px, 73svh, 550px);
-  max-width: 90vw;
-  object-fit: contain;
-}
+    .logo-container img {
+      display: block;
+      width: min(82vw, 420px);
+      height: clamp(220px, 38svh, 300px);
+      max-width: 90vw;
+      object-fit: contain;
+    }
 
-.slogan {
-  font-family: "Dancing Script", cursive;
-  font-size: clamp(20px, 3.5vw, 34px);
-  color: var(--green-main);
-  letter-spacing: 0.06em;
-  margin: 0 0 1svh;
-  font-weight: 600;
-}
+    /* Khẩu hiệu */
+    .slogan {
+      font-family: "Dancing Script", cursive;
+      font-size: clamp(20px, 3.5vw, 34px);
+      color: var(--green-main);
+      letter-spacing: 0.06em;
+      margin: 0 0 0.5svh;
+      font-weight: 600;
+      line-height: 1.2;
+    }
 
-
+    /* Khung quét QR */
     #qr-wrapper {
       width: min(85vw, 420px);
       background: var(--white-glass);
       padding: clamp(12px, 3vw, 24px);
       border-radius: clamp(12px, 3vw, 22px);
       box-shadow: 0 6px 20px rgba(0, 0, 0, 0.25);
+      flex-shrink: 0;
     }
 
     #reader {
@@ -82,7 +88,7 @@
       padding: 4px;
     }
 
-    /* Giữ giao diện vuông cho ảnh đại biểu */
+    /* Ảnh đại biểu */
     #person-img {
       display: none;
       width: 100%;
@@ -94,7 +100,7 @@
     }
 
     #result {
-      margin-top: 2svh;
+      margin-top: 0.5svh;
       font-size: clamp(0.85rem, 2.5vw, 1.1rem);
       background: rgba(209, 231, 221, 0.95);
       color: #0f5132;
@@ -109,7 +115,7 @@
     #person-info {
       display: none;
       width: min(90vw, 420px);
-      margin-top: 1svh;
+      margin-top: 0.5svh;
       padding: 12px;
       border-radius: 10px;
       background: var(--white-glass);
@@ -138,7 +144,12 @@
 
     @media (min-width: 1200px) {
       body {
-        gap: 3svh;
+        gap: 1svh;
+      }
+
+      .logo-container img {
+        width: min(70vw, 420px);
+        height: clamp(220px, 34svh, 280px);
       }
 
       #qr-wrapper {
@@ -147,8 +158,39 @@
     }
 
     @media (max-width: 480px) {
+      body {
+        gap: 0.8svh;
+        padding: 10px 12px;
+      }
+
+      .logo-container {
+        margin-bottom: -0.5svh;
+      }
+
+      .logo-container img {
+        width: 85vw;
+        height: clamp(180px, 30svh, 240px);
+      }
+
       .slogan {
+        font-size: clamp(19px, 5vw, 25px);
         letter-spacing: 0.04em;
+      }
+
+      #qr-wrapper {
+        width: min(92vw, 420px);
+        padding: 12px;
+      }
+    }
+
+    /* Màn hình thấp: thu gọn để tránh đẩy khung QR xuống dưới */
+    @media (max-height: 700px) {
+      .logo-container img {
+        height: clamp(150px, 27svh, 200px);
+      }
+
+      body {
+        justify-content: flex-start;
       }
     }
   </style>
@@ -163,7 +205,7 @@
   </div>
 
   <div class="slogan">
-    <em>Xung kích - tình nguyện - vì cộng đồng</em>
+    <em>Chào mừng đại biểu tham dự đại hội</em>
   </div>
 
   <div id="qr-wrapper">
@@ -181,7 +223,7 @@
   </div>
 
   <script>
-    // Web App URL của bạn — giữ nguyên đường dẫn đang sử dụng
+    // Giữ nguyên URL Web App Apps Script
     const API_URL =
       "https://script.google.com/macros/s/AKfycbzQ4lrhZ8o4G5UzlQ4vt9iXr5JmW55AqMr1gs6L7BgplG0o2V4fXlMZaDt_bwkFmAoW/exec";
 
@@ -212,6 +254,7 @@
             const size = Math.floor(
               Math.min(viewfinderWidth, viewfinderHeight) * 0.7
             );
+
             return {
               width: Math.min(size, 250),
               height: Math.min(size, 250)
@@ -281,7 +324,7 @@
       document.body.appendChild(script);
     }
 
-    // Nhận dữ liệu JSONP trả về từ Apps Script
+    // Nhận dữ liệu JSONP từ Apps Script
     window.handleAttendanceResponse = function (response) {
       showResult(response);
     };
